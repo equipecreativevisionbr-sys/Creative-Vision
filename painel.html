@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>OrthoDontic — Painel de Tráfego</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#f4f6f8;color:#1a1a1a;min-height:100vh}
+a{text-decoration:none}
+
+/* HEADER */
+.header{background:#fff;border-bottom:1px solid #e5e7eb;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-icon{width:40px;height:40px;border-radius:50%;background:#0d8c7c;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand-icon span{color:#fff;font-weight:700;font-size:13px}
+.brand-name{font-size:16px;font-weight:700;color:#0d8c7c}
+.brand-sub{font-size:11px;color:#6b7280;margin-top:1px}
+.header-right{display:flex;align-items:center;gap:14px}
+.date-txt{font-size:12px;color:#6b7280}
+.live-badge{display:inline-flex;align-items:center;gap:5px;background:#dcfce7;color:#15803d;font-size:10px;font-weight:600;padding:4px 10px;border-radius:20px}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#15803d;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* WRAP */
+.wrap{max-width:960px;margin:0 auto;padding:28px 20px 60px}
+
+/* UNIDADES */
+.units-label{font-size:11px;font-weight:600;color:#9ca3af;letter-spacing:.7px;text-transform:uppercase;margin-bottom:10px}
+.units-row{display:flex;gap:10px;margin-bottom:28px;flex-wrap:wrap}
+.unit-btn{flex:1;min-width:140px;background:#fff;border:1.5px solid #e5e7eb;border-radius:12px;padding:14px 18px;cursor:pointer;text-align:left;transition:all .18s}
+.unit-btn:hover{border-color:#0d8c7c;background:#f0faf8}
+.unit-btn.active{border-color:#0d8c7c;background:#f0faf8}
+.unit-dot{width:7px;height:7px;border-radius:50%;background:#0d8c7c;display:inline-block;margin-right:6px;opacity:0;transition:.15s}
+.unit-btn.active .unit-dot{opacity:1}
+.unit-btn-name{font-size:13px;font-weight:600;color:#111}
+.unit-btn-loc{font-size:11px;color:#6b7280;margin-top:3px}
+
+/* SECTION */
+.section-label{font-size:11px;font-weight:600;color:#9ca3af;letter-spacing:.7px;text-transform:uppercase;margin-bottom:10px}
+
+/* CARDS */
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:24px}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px 18px}
+.card-label{font-size:11px;color:#6b7280;margin-bottom:8px}
+.card-val{font-size:26px;font-weight:700;color:#111;line-height:1}
+.card-delta{font-size:11px;margin-top:6px;font-weight:500}
+.up{color:#16a34a}
+.down{color:#dc2626}
+.neutral{color:#6b7280}
+
+/* TWO COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.box{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:20px 22px}
+.box-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.box-title{font-size:14px;font-weight:600;color:#111}
+.plat-badge{font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px}
+.meta-badge{background:#eff6ff;color:#1d4ed8}
+.google-badge{background:#fef9c3;color:#854d0e}
+
+/* BARS */
+.bar-list{display:flex;flex-direction:column;gap:12px}
+.bar-top{display:flex;justify-content:space-between;margin-bottom:5px}
+.bar-name{font-size:12px;color:#6b7280}
+.bar-num{font-size:12px;font-weight:600;color:#111}
+.bar-track{height:6px;background:#f1f5f9;border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;transition:width .7s ease}
+.meta-fill{background:#3b82f6}
+.google-fill{background:#f59e0b}
+
+/* CHART */
+.chart-box{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:20px 22px;margin-bottom:20px}
+.chart-legend{display:flex;gap:16px;font-size:11px;color:#6b7280}
+.legend-item{display:flex;align-items:center;gap:5px}
+.legend-dot{width:10px;height:3px;border-radius:2px;display:inline-block}
+.chart-wrap{position:relative;width:100%;height:210px;margin-top:14px}
+
+/* TABLE */
+.table-box{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:20px 22px;margin-bottom:20px;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;color:#9ca3af;font-weight:500;padding:7px 10px;border-bottom:1px solid #f1f5f9}
+td{padding:9px 10px;border-bottom:1px solid #f9fafb;color:#111}
+tr:last-child td{border-bottom:none}
+.pill{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px}
+.pill-ok{background:#dcfce7;color:#166534}
+.pill-low{background:#fef9c3;color:#854d0e}
+.pill-bad{background:#fee2e2;color:#991b1b}
+.hoje-mark{font-size:10px;color:#0d8c7c;font-weight:600;margin-left:4px}
+
+/* FOOTER */
+.footer{display:flex;align-items:center;justify-content:space-between;padding-top:4px}
+.footer-txt{font-size:11px;color:#9ca3af}
+.footer-brand{font-size:11px;color:#9ca3af}
+.footer-brand strong{color:#0d8c7c}
+.refresh-btn{font-size:11px;font-weight:600;color:#0d8c7c;background:none;border:1px solid #0d8c7c;padding:6px 14px;border-radius:20px;cursor:pointer;transition:all .15s}
+.refresh-btn:hover{background:#0d8c7c;color:#fff}
+
+@media(max-width:640px){
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .two-col{grid-template-columns:1fr}
+  .header{padding:14px 16px}
+  .wrap{padding:20px 14px 50px}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand">
+    <div class="brand-icon"><span>Od</span></div>
+    <div>
+      <div class="brand-name">OrthoDontic</div>
+      <div class="brand-sub">Painel de Tráfego Pago</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="date-txt" id="dateTxt"></div>
+    <div class="live-badge"><span class="live-dot"></span>Ao vivo</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="units-label">selecione a unidade</div>
+  <div class="units-row">
+    <button class="unit-btn active" onclick="selectUnit(0,this)">
+      <span class="unit-dot"></span>
+      <div class="unit-btn-name">Bauru Centro</div>
+      <div class="unit-btn-loc">Bauru, SP</div>
+    </button>
+    <button class="unit-btn" onclick="selectUnit(1,this)">
+      <span class="unit-dot"></span>
+      <div class="unit-btn-name">Bauru Mary Dota</div>
+      <div class="unit-btn-loc">Bauru, SP</div>
+    </button>
+    <button class="unit-btn" onclick="selectUnit(2,this)">
+      <span class="unit-dot"></span>
+      <div class="unit-btn-name">Jaú</div>
+      <div class="unit-btn-loc">Jaú, SP</div>
+    </button>
+  </div>
+
+  <div class="section-label">resumo de hoje</div>
+  <div class="cards">
+    <div class="card">
+      <div class="card-label">Leads hoje</div>
+      <div class="card-val" id="leadsHoje">—</div>
+      <div class="card-delta" id="leadsDelta">—</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Agendamentos</div>
+      <div class="card-val" id="agenHoje">—</div>
+      <div class="card-delta" id="agenDelta">—</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Investimento</div>
+      <div class="card-val" id="investHoje">—</div>
+      <div class="card-delta neutral" id="investDelta">hoje</div>
+    </div>
+    <div class="card">
+      <div class="card-label">CPL médio</div>
+      <div class="card-val" id="cplHoje">—</div>
+      <div class="card-delta" id="cplDelta">—</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="box">
+      <div class="box-head">
+        <span class="box-title">Meta Ads</span>
+        <span class="plat-badge meta-badge">Instagram / Facebook</span>
+      </div>
+      <div class="bar-list">
+        <div>
+          <div class="bar-top"><span class="bar-name">Leads</span><span class="bar-num" id="mLeads">—</span></div>
+          <div class="bar-track"><div class="bar-fill meta-fill" id="mLeadsBar" style="width:0%"></div></div>
+        </div>
+        <div>
+          <div class="bar-top"><span class="bar-name">Agendamentos</span><span class="bar-num" id="mAgen">—</span></div>
+          <div class="bar-track"><div class="bar-fill meta-fill" id="mAgenBar" style="width:0%"></div></div>
+        </div>
+        <div>
+          <div class="bar-top"><span class="bar-name">Cliques no link</span><span class="bar-num" id="mClicks">—</span></div>
+          <div class="bar-track"><div class="bar-fill meta-fill" id="mClicksBar" style="width:0%"></div></div>
+        </div>
+        <div>
+          <div class="bar-top"><span class="bar-name">Impressões</span><span class="bar-num" id="mImp">—</span></div>
+          <div class="bar-track"><div class="bar-fill meta-fill" id="mImpBar" style="width:0%"></div></div>
+        </div>
+        <div>
+          <div class="bar-top"><span class="bar-name">Investido</span><span class="bar-num" id="mInvest">—</span></div>
+          <div class="bar-track"><div class="bar-fill meta-fill" id="mInvestBar" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box">
+      <div class="box-head">
+        <span class="box-title">Google Ads</span>
+        <span class="plat-badge google-badge">Search / Display</span>
+      </div>
+      <div class="bar-list">
+        <div>
+          <div class="bar-top"><span class="bar-name">Leads</span><span class="bar-num" id="gLeads">—</span></div>
+          <div class="bar-track"><div class="bar-fill google-fill" id="gLeadsBar" style="width:0%"></div></div>
+        </div>
+        <div>
+          <div class="bar-top"><span class="bar-name">Agendamentos</span><span class="bar-num" id="gAgen">—</span></div>
+          <div class="bar-track"><div class="bar-fill google-fill" id="gAgenBar" style="width:0%"></div></div>
+        </div>
+        <div>
+          <div class="bar-top"><span class="bar-name">Cliques</span><span class="bar-num" id="gClicks">—</span></div>
+          <div class="bar-track"><div class="bar-fill google-fill" id="gClicksBar" style="width:0%"></div></div>
+        </div>
+        <div>
+          <div class="bar-top"><span class="bar-name">Impressões</span><span class="bar-num" id="gImp">—</span></div>
+          <div class="bar-track"><div class="bar-fill google-fill" id="gImpBar" style="width:0%"></div></div>
+        </div>
+        <div>
+          <div class="bar-top"><span class="bar-name">Investido</span><span class="bar-num" id="gInvest">—</span></div>
+          <div class="bar-track"><div class="bar-fill google-fill" id="gInvestBar" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-box">
+    <div class="box-head">
+      <span class="box-title">Leads por dia — últimos 7 dias</span>
+      <div class="chart-legend">
+        <span class="legend-item"><span class="legend-dot" style="background:#3b82f6"></span>Meta</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#f59e0b"></span>Google</span>
+      </div>
+    </div>
+    <div class="chart-wrap"><canvas id="leadsChart"></canvas></div>
+  </div>
+
+  <div class="table-box">
+    <div class="box-head"><span class="box-title">Histórico semanal</span></div>
+    <table>
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Leads</th>
+          <th>Agend.</th>
+          <th>Investido</th>
+          <th>CPL</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+  <div class="footer">
+    <span class="footer-txt">Última atualização: <span id="lastUpdate">—</span></span>
+    <span class="footer-brand">Gestão por <strong>Creative Vision</strong></span>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const units = [
+  {
+    name:"Bauru Centro",
+    hoje:{leads:14,agen:9,invest:187,cpl:13.36,mLeads:9,mAgen:6,mClicks:312,mImp:8400,mInvest:110,gLeads:5,gAgen:3,gClicks:98,gImp:2100,gInvest:77},
+    semana:{labels:["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"],meta:[8,11,7,13,9,12,9],google:[4,6,5,7,5,6,5],agen:[5,7,4,8,6,7,6],invest:[162,180,155,190,175,185,160]}
+  },
+  {
+    name:"Bauru Mary Dota",
+    hoje:{leads:11,agen:7,invest:154,cpl:14.00,mLeads:7,mAgen:5,mClicks:245,mImp:6700,mInvest:90,gLeads:4,gAgen:2,gClicks:76,gImp:1800,gInvest:64},
+    semana:{labels:["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"],meta:[6,8,5,10,7,9,7],google:[3,4,4,5,4,5,4],agen:[4,5,3,6,4,6,4],invest:[130,145,125,155,140,150,130]}
+  },
+  {
+    name:"Jaú",
+    hoje:{leads:9,agen:6,invest:132,cpl:14.67,mLeads:6,mAgen:4,mClicks:198,mImp:5300,mInvest:80,gLeads:3,gAgen:2,gClicks:61,gImp:1400,gInvest:52},
+    semana:{labels:["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"],meta:[5,7,4,8,6,7,6],google:[2,3,3,4,3,4,3],agen:[3,4,3,5,4,5,3],invest:[110,125,105,135,120,130,110]}
+  }
+];
+
+let current = 0;
+let chartInst = null;
+
+function selectUnit(idx, el){
+  current = idx;
+  document.querySelectorAll('.unit-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  render();
+}
+
+function fmt(n){return n.toLocaleString('pt-BR')}
+function fmtR(n){return 'R$ '+n.toFixed(2).replace('.',',')}
+
+function render(){
+  const u = units[current];
+  const d = u.hoje;
+  const s = u.semana;
+
+  document.getElementById('leadsHoje').textContent = d.leads;
+  document.getElementById('leadsDelta').className='card-delta up';
+  document.getElementById('leadsDelta').textContent='↑ +3 vs ontem';
+  document.getElementById('agenHoje').textContent = d.agen;
+  document.getElementById('agenDelta').className='card-delta up';
+  document.getElementById('agenDelta').textContent='↑ +2 vs ontem';
+  document.getElementById('investHoje').textContent='R$'+d.invest;
+  document.getElementById('cplHoje').textContent='R$'+d.cpl.toFixed(2).replace('.',',');
+  document.getElementById('cplDelta').className='card-delta up';
+  document.getElementById('cplDelta').textContent='meta: R$ 18,00';
+
+  const maxL=Math.max(d.mLeads,d.gLeads)||1;
+  const maxA=Math.max(d.mAgen,d.gAgen)||1;
+  const maxC=Math.max(d.mClicks,d.gClicks)||1;
+  const maxI=Math.max(d.mImp,d.gImp)||1;
+  const maxInv=Math.max(d.mInvest,d.gInvest)||1;
+
+  document.getElementById('mLeads').textContent=d.mLeads;
+  document.getElementById('mLeadsBar').style.width=(d.mLeads/maxL*100)+'%';
+  document.getElementById('mAgen').textContent=d.mAgen;
+  document.getElementById('mAgenBar').style.width=(d.mAgen/maxA*100)+'%';
+  document.getElementById('mClicks').textContent=fmt(d.mClicks);
+  document.getElementById('mClicksBar').style.width=(d.mClicks/maxC*100)+'%';
+  document.getElementById('mImp').textContent=fmt(d.mImp);
+  document.getElementById('mImpBar').style.width=(d.mImp/maxI*100)+'%';
+  document.getElementById('mInvest').textContent=fmtR(d.mInvest);
+  document.getElementById('mInvestBar').style.width=(d.mInvest/maxInv*100)+'%';
+
+  document.getElementById('gLeads').textContent=d.gLeads;
+  document.getElementById('gLeadsBar').style.width=(d.gLeads/maxL*100)+'%';
+  document.getElementById('gAgen').textContent=d.gAgen;
+  document.getElementById('gAgenBar').style.width=(d.gAgen/maxA*100)+'%';
+  document.getElementById('gClicks').textContent=fmt(d.gClicks);
+  document.getElementById('gClicksBar').style.width=(d.gClicks/maxC*100)+'%';
+  document.getElementById('gImp').textContent=fmt(d.gImp);
+  document.getElementById('gImpBar').style.width=(d.gImp/maxI*100)+'%';
+  document.getElementById('gInvest').textContent=fmtR(d.gInvest);
+  document.getElementById('gInvestBar').style.width=(d.gInvest/maxInv*100)+'%';
+
+  if(chartInst){chartInst.destroy();}
+  const ctx=document.getElementById('leadsChart').getContext('2d');
+  chartInst=new Chart(ctx,{
+    type:'line',
+    data:{
+      labels:s.labels,
+      datasets:[
+        {label:'Meta',data:s.meta,borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,0.07)',tension:0.4,pointRadius:4,pointBackgroundColor:'#3b82f6',fill:true,borderWidth:2},
+        {label:'Google',data:s.google,borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,0.06)',tension:0.4,pointRadius:4,pointBackgroundColor:'#f59e0b',fill:true,borderWidth:2}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},
+      scales:{
+        x:{grid:{display:false},ticks:{font:{size:11},color:'#9ca3af'}},
+        y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:11},color:'#9ca3af',stepSize:2},min:0}
+      }
+    }
+  });
+
+  const hoje=new Date();
+  let tbody='';
+  for(let i=6;i>=0;i--){
+    const dt=new Date(hoje); dt.setDate(dt.getDate()-i);
+    const d2=dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+    const idx2=6-i;
+    const tLeads=s.meta[idx2]+s.google[idx2];
+    const ag=s.agen[idx2];
+    const inv=s.invest[idx2];
+    const cpl2=(inv/tLeads).toFixed(2).replace('.',',');
+    const isHoje=i===0;
+    let status='';
+    if(tLeads>=12) status='<span class="pill pill-ok">Ótimo</span>';
+    else if(tLeads>=8) status='<span class="pill pill-low">Regular</span>';
+    else status='<span class="pill pill-bad">Baixo</span>';
+    tbody+=`<tr${isHoje?' style="font-weight:600"':''}><td>${d2}${isHoje?'<span class="hoje-mark">(hoje)</span>':''}</td><td>${tLeads}</td><td>${ag}</td><td>R$ ${fmt(inv)}</td><td>R$ ${cpl2}</td><td>${status}</td></tr>`;
+  }
+  document.getElementById('tableBody').innerHTML=tbody;
+  document.getElementById('lastUpdate').textContent=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+}
+
+const now=new Date();
+document.getElementById('dateTxt').textContent=now.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+render();
+</script>
+</body>
+</html>
